@@ -49,7 +49,7 @@ public class Doctor extends Person {
                 id, getName(), getPhone(), specialty, years);
     }
 
-    public String toFileString() {
+    public String toStringFile() {
         return id + "," + getName() + "," + getPhone() + "," + specialty + "," + years;
     }
 }
