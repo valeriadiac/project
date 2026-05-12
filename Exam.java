@@ -1,6 +1,6 @@
 public abstract class Exam {
 
-    private static int nextID = 0;
+    private static int nextId = 0;
     private int id;
     private String examName;
     private String categoryName;
@@ -9,7 +9,7 @@ public abstract class Exam {
     private int doctorId;
 
     public Exam(String examName, String categoryName, int maxSlots, double cost, int doctorId) {
-        this.id = nextID++;
+        this.id = ++nextId;
         this.examName = examName;
         this.categoryName = categoryName;
         this.maxSlots = maxSlots;
@@ -19,12 +19,12 @@ public abstract class Exam {
 
     public Exam(int id, String examName, String categoryName, int maxSlots, double cost, int doctorId) {
         this.id = id;
-        if (id >= nextID) nextID = id + 1;
         this.examName = examName;
         this.categoryName = categoryName;
         this.maxSlots = maxSlots;
         this.cost = cost;
         this.doctorId = doctorId;
+        if (id > nextId) nextId = id;
     }
 
     public int getId() {
