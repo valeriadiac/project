@@ -1,6 +1,6 @@
 public class Appointment {
 
-    private static int nextID = 0;
+    private static int nextId = 0;
     private int id;
     private int patientId;
     private int examId;
@@ -8,7 +8,7 @@ public class Appointment {
     private boolean fastResults;
 
     public Appointment(int patientId, int examId, String date, boolean fastResults) {
-        this.id = nextID++;
+        this.id = ++nextId;
         this.patientId = patientId;
         this.examId = examId;
         this.date = date;
@@ -17,11 +17,11 @@ public class Appointment {
 
     public Appointment(int id, int patientId, int examId, String date, boolean fastResults) {
         this.id = id;
-        if (id >= nextID) nextID = id + 1;
         this.patientId = patientId;
         this.examId = examId;
         this.date = date;
         this.fastResults = fastResults;
+        if (id > nextId) nextId = id;
     }
 
     public int getAppointmentId() {
