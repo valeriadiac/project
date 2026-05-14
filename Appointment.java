@@ -53,8 +53,4 @@ public class Appointment {
         return String.format("Appointment ID: %d | Patient ID: %d | Exam ID: %d | Date: %s | Fast Results: %b",
                 id, patientId, examId, date, fastResults);
     }
-
-    public String toStringFile() {
-        return id + "," + patientId + "," + examId + "," + date + "," + fastResults;
-    }
 }
