@@ -1,6 +1,6 @@
 public class Doctor extends Person {
 
-    private static int nextId= 0;
+    private static int nextID= 0;
     private int id;
     private String specialty;
     private int years;
@@ -8,7 +8,7 @@ public class Doctor extends Person {
     public Doctor(String name, int phone, String specialty, int years) {
 
         super(name, phone);
-        this.id = ++nextId;
+        this.id = nextID++;
         this.specialty = specialty;
         this.years = years;
 
@@ -18,12 +18,12 @@ public class Doctor extends Person {
 
         super(name, phone);
         this.id = id;
+        if (id >= nextID) nextID = id +1;
         this.specialty = specialty;
         this.years = years;
-        if (id > nextId) nextId = id;
     }
 
-    public int getId() {
+    public int getID() {
         return id;
     }
 
@@ -49,4 +49,7 @@ public class Doctor extends Person {
                 id, getName(), getPhone(), specialty, years);
     }
 
+    public String toStringFile() {
+        return id + "," + getName() + "," + getPhone() + "," + specialty + "," + years;
+    }
 }

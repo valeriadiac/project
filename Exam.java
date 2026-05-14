@@ -1,6 +1,6 @@
 public abstract class Exam {
 
-    private static int nextId = 0;
+    private static int nextID = 0;
     private int id;
     private String examName;
     private String categoryName;
@@ -8,8 +8,8 @@ public abstract class Exam {
     private double cost;
     private int doctorId;
 
-    public Exam(String examName, String categoryName, int maxSlots, double cost, int doctorId) {
-        this.id = ++nextId;
+    Exam(String examName, String categoryName, int maxSlots, double cost, int doctorId) {
+        this.id = nextID++;
         this.examName = examName;
         this.categoryName = categoryName;
         this.maxSlots = maxSlots;
@@ -17,14 +17,14 @@ public abstract class Exam {
         this.doctorId = doctorId;
     }
 
-    public Exam(int id, String examName, String categoryName, int maxSlots, double cost, int doctorId) {
+    Exam(int id,String examName, String categoryName, int maxSlots, double cost, int doctorId ) {
         this.id = id;
+        if (id >= nextID) nextID = id + 1;
         this.examName = examName;
         this.categoryName = categoryName;
         this.maxSlots = maxSlots;
         this.cost = cost;
         this.doctorId = doctorId;
-        if (id > nextId) nextId = id;
     }
 
     public int getId() {
@@ -69,9 +69,14 @@ public abstract class Exam {
 
     public abstract double getCost(boolean fastResults);
 
-    @Override
-    public String toString() {
+      
+@Override
+    public String toString(){
         return String.format("Exam ID: %d | Name: %s | Category: %s | Max Slots: %d | Cost: %.2f | Doctor ID: %d",
                 id, examName, categoryName, maxSlots, cost, doctorId);
+    }
+      
+    public String toStringFile() {
+        return id + "," + examName + "," + categoryName + "," + maxSlots + "," + cost + "," + doctorId;
     }
 }
