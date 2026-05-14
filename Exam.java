@@ -74,8 +74,4 @@ public abstract class Exam {
         return String.format("Exam ID: %d | Name: %s | Category: %s | Max Slots: %d | Cost: %.2f | Doctor ID: %d",
                 id, examName, categoryName, maxSlots, cost, doctorId);
     }
-
-    public String toStringFile() {
-        return id + "," + examName + "," + categoryName + "," + maxSlots + "," + cost + "," + doctorId;
-    }
 }
