@@ -34,10 +34,4 @@ public class ImagingExamination extends Exam {
         return super.toString() + String.format(" | Machine Type: %s", machineType);
     }
 
-    @Override
-    public String toStringFile() {
-        return super.toStringFile() + "," + machineType;
-    }
-    
-
 }
