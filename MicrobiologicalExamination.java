@@ -33,10 +33,4 @@ public class MicrobiologicalExamination extends Exam {
     public String toString() {
         return super.toString() + String.format(" | Sample Type: %s", sampleType);
     }
-
-    @Override
-    public String toStringFile() {
-        return super.toStringFile() + "," + sampleType;
-    }
-    
 }
