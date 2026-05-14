@@ -33,10 +33,4 @@ public class SpecializedExamination extends Exam {
     public String toString() {
         return super.toString() + String.format(" | Specialty: %s", specialty);
     }
-
-    @Override
-    public String toStringFile() {
-        return super.toStringFile() + "," + specialty;
-    }
-    
 }
