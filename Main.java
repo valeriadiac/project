@@ -1,5 +1,6 @@
-import java.io.*
+import java.io.*;
 import java.util.Scanner;
+import java.util.HashMap;
 
 public class Main{
     //----------------Collection for the main menu-------------------
@@ -47,6 +48,106 @@ public class Main{
         }
         System.out,println("----------------------------");
     }
+
+    //-------------------Submenu loops------------------------------------
+    public static void doctorsMenuLoop(Scanner in,FileManager fm){
+        boolean back=false;
+        while ((!back)) {
+            printMenu(doctorsMenu);
+            System.out.println("Choose : ");
+            String c = in.nextLine();
+            
+            switch (c){
+                case "1":fm.addDoctor(in); break ;
+                case "2":fm.showAllDoctors(); break;
+                case "3": fm.showDoctorDetails(in); break;
+                case "4":fm.showDoctorAppointment(in); break;
+                case "0": back=true; break;
+                default : System.out.println("Invalid choice.");
+
+                        
+            }
+        
+        }
+    }
+
+
+
+    public static void patientsMenuLoop(Scanner in,FileManager fm){
+        boolean back=false;
+        while ((!back)) {
+            printMenu(patientsMenu);
+            System.out.println("Choose : ");
+            String c = in.nextLine();
+            
+            switch (c){
+                case "1":fm.addPatient(in); break ;
+                case "2":fm.showAllPatients(); break;
+                case "3": fm.showPatientDetails(in); break;
+                case "0": back=true; break;
+                default : System.out.println("Invalid choice.");
+                
+                        
+            }
+        
+        }
+    }
+
+    public static void examsMenuLoop(Scanner in,FileManager fm){
+        boolean back=false;
+        while ((!back)) {
+            printMenu(examsMenu);
+            System.out.println("Choose : ");
+            String c = in.nextLine();
+            
+            switch (c){
+                case "1":fm.addExam(in); break ;
+                case "2":fm.showAllExams(); break;
+                case "3": fm.showExamDetails(in); break;
+                case "0": back=true; break;
+                default : System.out.println("Invalid choice.");
+                
+                        
+            }
+        
+        }
+    }
+
+
+    public static void appointmentsMenuLoop(Scanner in,FileManager fm){
+        boolean back=false;
+        while ((back)) {
+            printMenu(appointmentsMenu);
+            System.out.println("Choose : ");
+            String c = in.nextLine();
+            
+            switch (c){
+                case "1":fm.addAppointment(in); break ;
+                case "2":fm.showAllAppointments(); break;
+                case "3": fm.showPatientAppointments(in); break;
+                case "4":fm.deleteAppointment(in); break;
+                case "5": fm.showAppointmentDate(in);break;
+                case "0": back=true; break;
+                default : System.out.println("Invalid choice.");
+                
+                        
+            }
+        
+        }
+    }
+
+
+    public static void satisticsMenuLoop(Scanner in,FileManager fm){
+        boolean back=false;
+        while ((!back)) {
+            
+        
+        }
+    }
+    
+    
+    
+    
     
 
 
@@ -69,41 +170,69 @@ public class Main{
         // if file doesnt exists creat new and load it in the collections
         if(!f1.exists()){
             System.out.println("doctors.txt not found. Creating initial doctors...");
-            fm.saveDoctor("doctors.txt");
+            Doctor d1=new Doctor("Ektor",34567238,"Dermatologist",17);
+            Doctor d2=new Doctor("Maria",4568799,"Cardiologist",23);
+            Doctor d3=new Doctor("Sara",23864567,"Physiologist",15);
+            fm.addDoctor(d1);
+            fm.addDoctor(d2);
+            fm.addDoctor(d3);
+
+
+
 
         }
         else {
-            System.out.println("doctors.txt not found. Creating initial doctors...");
+            System.out.println("Loading doctors.txt ...");
             fm.loadDoctor("doctors.txt");
         }
         // PATIENTS
         if(!f2.exists()){
             System.out.println("patients.txt not found. Creating initial patients...");
-            fm.savePatient("patients.txt");
+            Patient p1=new Patient("Giorgos",87534567,"gior@.gmail.com");
+            Patient p2=new Patient("Mary",45678905,"mary@gmail.com");
+            Patient p3=new Patient("Nicol",854567897,"nicol@gmail.com");
+            fm.addPatient(p1);
+            fm.addPatient(p2);
+            fm.addPatient(p3);
+
+
 
         }
         else {
-            System.out.println("patients.txt not found. Creating initial patients...");
+            System.out.println("Loading patients.txt ...");
             fm.loadPatient("patients.txt");
         }
          // EXAMS
         if(!f3.exists()){
             System.out.println("exams.txt not found. Creating initial exams...");
-            fm.savePatient("exams.txt");
+            Specialized ex1= new Specialized("Specialized", 23, 80, 3, "Cardiology");
+            Microbiological ex2 =new Microbiological("Microbiological", 10, 40, 1, "Blood");
+            ImagingExamination ex3=new ImagingExamination("Imaging", 5, 20, 8, "CT");
+            fm.addExam(ex1);
+            fm.addExam(ex2);
+            fm.addExam(ex3);
+
 
         }
         else {
-            System.out.println("exams.txt not found. Creating initial exams...");
+            System.out.println("Loading exams.txt ...");
             fm.loadPatient("exams.txt");
         }
         //APPOINTMENTS
         if(!f4.exists()){
-            System.out.println("appointments.txt not found. Creating initial appointments...");
-            fm.savePatient("appointments.txt");
+            System.out.println("appointments.txt not found. Creating initial exams...");
+            Appointment a1=new Appointment(7, 7, "20:04:2026",true );
+            Appointment a2=new Appointment(7, 9, "08:05:2026",false );
+            Appointment a3=new Appointment(6, 6, "22:10:2026",true );
+            fm.addAppointment(a1);
+            fm.addAppointment(a2);
+            fm.addAppointment(a3);
 
-        }
+
+
+       }
         else {
-            System.out.println("appointments.txt not found. Creating initial appointments...");
+            System.out.println("Loading appointments.txt ...");
             fm.loadPatient("appointments.txt");
         }
 
@@ -116,8 +245,42 @@ public class Main{
             System.out.println("Choose: ");
             String choice=in.nextLine();
 
-            switch (choice)
-         }
+            switch (choice){
+                case "1":
+                    doctorsMenuLoop(in,fm);
+                    break;
+                case "2":
+                    patientsMenuLoop(in,fm);
+                    break;
+                case "3":
+                    examsMenuLoop(in,fm);
+                case "4":
+                    appointmentsMenuLoop(in,fm);
+                    break;
+                case "5":
+                    satisticsMenuLoop(in,fm);
+                    break;
+                case "0":
+                    running =false;
+                    break;
+                default:
+                    System.out.println("Invalid Choice.");
+                
+
+
+            }
+        }
+
+        //----------------Save all before exit---------------------------
+        fm.saveDoctor("doctors.txt");
+        fm.savePatient("patients.txt");
+        fm.saveExam("exams.txt");
+        fm.saveAppointment("appointments.txt");
+
+
+        System.out.println("Data saved ! The program is finished successfully ! ");
+
+
 
 
         

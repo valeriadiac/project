@@ -1,5 +1,6 @@
 import java.io*;
-import java.util*;
+import java.util
+import java.util.HashMap;*;
 
 
 
@@ -643,47 +644,38 @@ public class  FileManager{
 
     }
 
-    //--------------------END-----------------------------------
-    
+    //--------------------------------STAISTICS--------------------------
+    public void statisticsPerPatient(){
+        System.err.println("-----------Revenue per Patient--------------------");
+        double n1=0;// total revenue from all patients
+        for (Patient p:patients.values()){
+            // for every patient
+            double n2=0;// revenue from the specific patient
+            System.out.println("\nPatient: "+p.getName()+"(ID:"+p.getID()+" )");
+            for (Appointment ap : appoointments.values()){
+                // for every appointment
+                // if the appointment is for the specific patient
+                if(ap.getPatientId()==p.getID()){
+                    Exam ex=exams.get(ap.getExamId());// find the exam for this appointment
+                    // calculate the cost for the exam :
+                    double cost=ex.getCost(ap.getFastResults());
+                    System.out.println(" Appointment ID: "+ap.getAppointmentId());
+                    System.out.println(" Exam : "+ex.getExamName());
+                    System.out.println(" Date: "+ap.getDate());
+                    System.out.println(" Fast Results"+ap.getFastResults());
+                    System.out.println(" Cost: "+cost);   
+                    n2+=cost;// add the cost to the revenue             
 
 
+                }
+            }
+            System.out.println("Total revenue from this patient : "+n2);
+            n1+=n2
+        }
+        System.out.println(" Total revenue from all patients "+n1);
 
+    }
 }
 
 
-
-
-
-
-
-   
-
-
-
-
-
-
-
-
-
     
-
-
-
-        
-        
-
-        
-
-
-
-
-
-
-
-    
-    
-
-
-
-
