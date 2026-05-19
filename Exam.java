@@ -5,7 +5,7 @@ public abstract class Exam {
     private String examName;
     private String categoryName;
     private int maxSlots;
-    private double cost;
+    protected double cost;
     private int doctorId;
 
     Exam(String examName, String categoryName, int maxSlots, double cost, int doctorId) {

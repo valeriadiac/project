@@ -1,7 +1,7 @@
 import java.util.*;
 import java.io.*;
-class FileManager {
-    //Creating four hashmaps
+public class FileManager2 {
+      //Creating four hashmaps
     HashMap<Integer, Doctor> doctors = new HashMap<>();
     HashMap<Integer, Patient> patients = new HashMap<>();
     HashMap<Integer, Exam> exams = new HashMap<>();
@@ -11,19 +11,19 @@ class FileManager {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))){
             String line;
             while ((line = reader.readLine()) != null){
-                String[] tokens = line.split(",");
-                for (int i = 0; i<tokens.length; i++) tokens[i]= tokens[i].trim();
-                Doctor d = new Doctor(Integer.parseInt(tokens[0]),
-                                    tokens[1],
-                                    Integer.parseInt(tokens[2]),
-                                    tokens[3],
-                                    Integer.parseInt(tokens[4]));
-                doctors.put(d.getId(),d);
+                String[] tokens = line.split(",");// devide the line in words every time ts sees " , " and then it creates an array with the words  
+                for (int i = 0; i<tokens.length; i++) tokens[i]= tokens[i].trim();// deletes the spaces that might exist in a word
+                Doctor d = new Doctor(Integer.parseInt(tokens[0]),//0=Id
+                                    tokens[1],//1=name
+                                    Integer.parseInt(tokens[2]),// 2=phone
+                                    tokens[3],// 3=speciality
+                                    Integer.parseInt(tokens[4]));//4=years of experience
+                doctors.put(d.getID(),d);// it adds the doctor in the hashmap
             }
             reader.close(); //Closing the file
         }
         catch (IOException e){ System.err.println("Error while reading file: " + e.getMessage());}
-    } 
+    } //----------------------------------------------------------------------------------------------------------------------------------
 
     public void loadPatients(String filePath){
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))){
@@ -33,12 +33,12 @@ class FileManager {
                 for (int i = 0; i<tokens.length; i++) tokens[i] = tokens[i].trim();
                 Patient p=new Patient(Integer.parseInt(tokens[0]), tokens[1],
                                       Integer.parseInt(tokens[2]), tokens[3]);
-                patients.put(p.getId(),p);
+                patients.put(p.getID(),p);
             }
             reader.close(); //Closing the file
         }
         catch(IOException e) {System.err.println("Error while reading file: " + e.getMessage());}
-    }
+    }//-----------------------------------------------------------------------------------------------------------------
 
     public void loadExams(String filePath) {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))){
@@ -48,23 +48,26 @@ class FileManager {
                 for (int i = 0; i < tokens.length; i++ ) tokens[i] = tokens[i].trim();
                 String category = tokens[2];
                 Exam e = null;
-                if (category.equals("Imaging")){
-                    e = new ImagingExamination(Integer.parseInt(tokens[0]), tokens[1],
-                                               Integer.parseInt(tokens[3]), Double.parseDouble(tokens[4]),
-                                               Integer.parseInt(tokens[5]), tokens[6]);
+                while(e==null){// Να θεωρησουμε οτι θα δοθει μεσα απο το αρχειο σωστα εχαμσ 
+                    if (category.equals("Imaging")){
+                    e = new ImagingExamination(Integer.parseInt(tokens[0]), tokens[1],//0=id,1=examName
+                                               Integer.parseInt(tokens[3]), Double.parseDouble(tokens[4]),//3=maxslots,4=cost
+                                               Integer.parseInt(tokens[5]), tokens[6]);//5=doctorID,6=machineType
                 } else if (category.equals("Microbiological")){
-                    e = new MicrobiologicalExamination(Integer.parseInt(tokens[0]), tokens[1],
-                                                       Integer.parseInt(tokens[3]), Double.parseDouble(tokens[4]),
-                                                       Integer.parseInt (tokens[5]), tokens[6]
+                    e = new MicrobiologicalExamination(Integer.parseInt(tokens[0]), tokens[1],//0=id,1=examName
+                                                       Integer.parseInt(tokens[3]), Double.parseDouble(tokens[4]),//3=maxslots,4=cost
+                                                       Integer.parseInt (tokens[5]), tokens[6]//5= doctorID   ,6=sampleType
                     );
                 } else if (category.equals("Specialized")){
-                    e=new SpecializedExamination(Integer.parseInt(tokens[0]), tokens[1], Integer.parseInt(tokens[3]),
-                                            Double.parseDouble(tokens[4]), Integer.parseInt(tokens[5]), tokens[6]);
+                    e=new SpecializedExamination(Integer.parseInt(tokens[0]), tokens[1], Integer.parseInt(tokens[3]),//0=id,1=examName,3=maxslots
+                                            Double.parseDouble(tokens[4]), Integer.parseInt(tokens[5]), tokens[6]);//4=cost,5= doctorID   ,6=specialty
                 }
-                if (e != null) exams.put(e.getId(),e);
+                if (e != null) exams.put(e.getId(),e);// κατευθειαν βαζουμε χωρισ ιφ τοτε
+                else System.out.println();
+                }
             }
         } catch (IOException e) {System.err.println("Error while reading file: " + e.getMessage());}
-    }
+    }//-----------------------------------------------------------------------------------------------------------------------------
 
     public void loadAppointments(String filePath){
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))){
@@ -72,22 +75,22 @@ class FileManager {
             while ((line = reader.readLine()) != null){
                 String[] tokens =line.split(",");
                 for (int i = 0; i<tokens.length; i++)tokens[i]= tokens[i].trim();
-                Appointment ap = new Appointment(Integer.parseInt(tokens[0]), Integer.parseInt(tokens[1]),
-                                                Integer.parseInt(tokens[2]), tokens[3], Boolean.parseBoolean(tokens[4]));
+                Appointment ap = new Appointment(Integer.parseInt(tokens[0]), Integer.parseInt(tokens[1]),//0=id,1=patientId
+                                                Integer.parseInt(tokens[2]), tokens[3], Boolean.parseBoolean(tokens[4]));//2=examId,3=date,4=fastResults
                 appointments.put(ap.getAppointmentId(),ap);
             }
             reader.close(); //Closing the file
         } catch (IOException e) {System.err.println("Error while reading file: " + e.getMessage());}
     }
-    //-------------------------------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------------------
     //Creating 4 methods for saving items from hashmaps to files
     public void saveDoctors(String filePath){
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))){
             for (Doctor d:doctors.values()){
-                writer.write(d.getId() + ","
+                writer.write(d.getID() + ","
                             + d.getName() + "," + d.getPhone() + "," 
                             + d.getSpecialty() + "," + d.getYears());
-                writer.newLine();
+                writer.newLine();//we change the line for the next time we want to write somethig else in the file 
             }
             writer.close(); 
         } catch (IOException e) {System.err.println("Error while writing to file: " + e.getMessage());}
@@ -96,42 +99,42 @@ class FileManager {
     public void savePatients(String filePath){
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))){
             for (Patient p: patients.values()){
-                writer.write(p.getId() + "," + p.getName() + "," + p.getPhone() + "," + p.getEmail());
-                writer.newLine();
+                writer.write(p.getID() + "," + p.getName() + "," + p.getPhone() + "," + p.getEmail());
+                writer.newLine();//we change the line for the next time we want to write somethig else in the file 
             }
             writer.close();
         } catch (IOException e) {System.err.println("Error while writing to file: " + e.getMessage());}
-    }
+    }//-----------------------------------------------------------------------------------------------------
 
     public void saveExams(String filePath) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-            for (Exam e: exams.values()){
+            for (Exam e: exams.values()){// e has sees only the methods from the superclass
                 if (e instanceof ImagingExamination){
-                    ImagingExamination im = (ImagingExamination) e;
+                    ImagingExamination im = (ImagingExamination) e;//downcasting in order to have access on the methods of the subclass
                     writer.write(im.getId() + "," + im.getExamName() + "," + "Imaging" + "," + im.getMaxSlots() + "," 
                                 + im.getExamCost() + "," + im.getDoctorId() +"," + im.getMachineType());
                 } else if (e instanceof MicrobiologicalExamination){
-                    MicrobiologicalExamination mic = (MicrobiologicalExamination) e;
+                    MicrobiologicalExamination mic = (MicrobiologicalExamination) e;//downcasting
                     writer.write(mic.getId() + "," + mic.getExamName() + "," 
                                 + "Microbiological" + "," + mic.getMaxSlots() + "," 
                                 + mic.getExamCost() + "," + mic.getDoctorId() +"," + mic.getSampleType());
                 } else if (e instanceof SpecializedExamination){
-                    SpecializedExamination sp = (SpecializedExamination) e;
+                    SpecializedExamination sp = (SpecializedExamination) e;//downcasting
                     writer.write(sp.getId() + "," + sp.getExamName() + "," 
                                 + "Specialized" + "," + sp.getMaxSlots() + "," 
                                 + sp.getExamCost() + "," + sp.getDoctorId() +"," + sp.getSpecialty());
                 }
-                writer.newLine();
+                writer.newLine();//we change the line for the next time we want to write somethig else in the file 
             }
             writer.close();
         } catch (IOException e) {System.err.println("Error while writing to file: " + e.getMessage());}
-    }
+    }//----------------------------------------------------------------------------------------------------
 
     public void saveAppointments(String filePath){
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))){
             for (Appointment ap: appointments.values()){
                 writer.write(ap.getAppointmentId() + "," + ap.getPatientId() + "," + ap.getExamId() + "," + ap.getDate() + "," + ap.getFastResults());
-                writer.newLine();
+                writer.newLine();//we change the line for the next time we want to write somethig else in the file 
             }
             writer.close();
         } catch (IOException e) {System.err.println("Error while writing to file: " + e.getMessage());}
@@ -140,11 +143,11 @@ class FileManager {
     //-------------------------------------------------------------------------------------------------------------
     //Creating methods for adding items to hashmaps 
     public void addDoctor(Doctor d) {
-        doctors.put(d.getId(),d);
+        doctors.put(d.getID(),d);
     }
 
     public void addPatient(Patient p){
-        patients.put(p.getId(), p);
+        patients.put(p.getID(), p);
     }
 
     public void addExam(Exam e) {
@@ -185,7 +188,7 @@ class FileManager {
         int phone= Integer.parseInt(in.nextLine());
         System.out.println("Enter doctor's years of experience: ");
         int years = Integer.parseInt(in.nextLine());
-        System.out.println("Choose specialty:");
+        System.out.println("Choose specialty:");// η εκφωνηση λεει να εμφανησουμε συγεκριμενα ποιεσ ειδικοτιτεσ πρεπει να εχουμε 
         String specialty = in.nextLine();
 
         Doctor d = new Doctor(name, phone, specialty, years);
@@ -195,8 +198,8 @@ class FileManager {
 
     public int doctorHelper(Scanner in){
         while(true){
-            showAllDoctors();
-            System.out.println("Enter Doctor id: ");
+            showAllDoctors();//the system shows all doctors
+            System.out.println("Enter Doctor id: ");//then the user has to choose 
             int id = Integer.parseInt(in.nextLine());
             Doctor d = doctors.get(id);
             //the system checks if the doctor exists
@@ -240,8 +243,8 @@ class FileManager {
 
     public int patientHelper(Scanner in){
         while(true){
-            showAllPatients();
-            System.out.println("Enter patient id: ");
+            showAllPatients();//the system shows all patients
+            System.out.println("Enter patient id: ");//the user has to choose
             int id = Integer.parseInt(in.nextLine());
             Patient p = patients.get(id);
             //the system checks if the patient exists
@@ -270,12 +273,13 @@ class FileManager {
         System.out.println("Enter cost: ");
         double cost = Double.parseDouble(in.nextLine());
         int doctorId = doctorHelper(in);
+        Exam ex = null;//will hold the created exam object
+        while (ex==null){//loop until the user selects a valid exam category and details
         System.out.println("Pick exam category:");
         System.out.println("1. Imaging");
         System.out.println("2. Microbiological");
         System.out.println("3. Specialized");
         int choice = Integer.parseInt(in.nextLine());
-        Exam ex = null;
         switch (choice){
             case 1:
                 System.out.println("Choose machine type:");
@@ -283,38 +287,43 @@ class FileManager {
                 System.out.println("2. CT");
                 System.out.println("3. X-Ray");
                 int choice2 = Integer.parseInt(in.nextLine());
-                String im =null;
+                String im="";
                 if (choice2 == 1) im= "MRI";
                 else if (choice2 == 2) im ="CT";
                 else if (choice2 == 3) im = "X-Ray";
                 ex = new ImagingExamination(name, maxSlots, cost, doctorId, im);
+                break;
             case 2:
                 System.out.println("Choose sample:");
                 System.out.println("1. Blood");
                 System.out.println("2. Urine");
                 System.out.println("3. Swab");
                 int choice3 = Integer.parseInt(in.nextLine());
-                String sample = null;
+                String sample ="";
                 if (choice3 == 1) sample="Blood";
                 else if (choice3 ==2) sample ="Urine";
                 else if (choice3==3) sample= "Swab";
                 ex =new MicrobiologicalExamination(name,maxSlots, cost, doctorId,sample);
+                break;
             case 3:
                 System.out.println("Choose specialty:");
                 System.out.println("1. Cardiology");
                 System.out.println("2. Neurology");
                 System.out.println("3. Pulmonology");
                 int choice4 = Integer.parseInt(in.nextLine());
-                String specialty = null;
+                String specialty = "";
                 if (choice4 == 1) specialty = "Cardiology";
                 else if (choice4 == 2)specialty = "Neurology";
                 else if (choice4==3) specialty= "Pulmonology";
                 ex = new SpecializedExamination(name, maxSlots,cost, doctorId,specialty);
-        }
-        if (ex !=null) addExam(ex);
+                break;
+            }
+            if (ex==null) System.out.println("Invalid choice"); 
+        }  
+        addExam(ex);
         System.out.println("Added the exam successfully");
-    }
-
+        }
+    }//----------------------------------------------------------------------
     public int examHelper(Scanner in) {
         while(true){
             showAllExams();
@@ -328,8 +337,7 @@ class FileManager {
             System.out.println("Exam found: " + ex);
             return id;      
         }
-    }
-
+    }//------------------------------------------------------------------------
     public void showExamDetails(Scanner in){
         int id =examHelper(in);
         System.out.println("Appointments for this exam: ");
@@ -350,7 +358,7 @@ class FileManager {
                 System.out.println("Invalid format please enter the date again ");
                 continue;
             }
-            int count = 0;
+            int count = 0;//controls if there is any appointment available in an specific date 
             for (Appointment ap:appointments.values()) if (ap.getExamId() ==idExam && ap.getDate().equals(date)) count++;
             if (count>= ex.getMaxSlots()){
                 System.out.println("No available appointments. Choose a different date");
@@ -363,15 +371,13 @@ class FileManager {
         Appointment ap = new Appointment(idPatient, idExam, date, fastResults ) ;
         addAppointment(ap);
         System.out.println("Appointment added successfully");
-    }
-
+    }//----------------------------------------------------------------------------
     public void deleteAppointment(Scanner in){
-        int id = 0;
         Appointment ap= null;
         while (true) {
             showAllAppointments();
             System.out.println("Enter appointment id:");
-            id = Integer.parseInt(in.nextLine());
+            int id = Integer.parseInt(in.nextLine());
             ap = appointments.get(id);
             if(ap==null) {
                 System.out.println("Could not find appointment");
@@ -419,13 +425,13 @@ class FileManager {
     public void revenuePerPatient(){
         double total= 0;
         for (Patient p: patients.values()){
-            double patientTotal = 0;
+            double patientTotal = 0;// revenue for specific patient
             System.out.println("Patient: " + p.getName());
-            for(Appointment ap:appointments.values()){
-                if (ap.getPatientId() == p.getId()) {
-                    Exam exam = exams.get(ap.getExamId());
-                    double cost = exam.getCost(ap.getFastResults());
-                    System.out.println(ap + " | Cost: " + cost);
+            for(Appointment ap:appointments.values()){//check all appointments to find those belonging to this patient 
+                if (ap.getPatientId() == p.getID()) {
+                    Exam exam = exams.get(ap.getExamId());// retrieve the exam linked to the appointment
+                    double cost = exam.getCost(ap.getFastResults());// calculate cost
+                    System.out.println(ap + " | Cost: " + cost);//print appointment details 
                     patientTotal += cost;
                 }
             }
@@ -438,12 +444,12 @@ class FileManager {
     public void revenuePerExam(){
         double total =0;
         for (Exam ex: exams.values()){
-            double examTotal = 0;
+            double examTotal = 0;//revenue generated by this specific exam
             System.out.println("Exam: "+ex.getExamName());
-            for(Appointment ap:  appointments.values()){
+            for(Appointment ap:  appointments.values()){//check all appointments to find thoe linked to this exam
                 if (ap.getExamId() == ex.getId()){
-                    double cost = ex.getCost(ap.getFastResults());
-                    System.out.println(ap + " | Cost: " + cost);
+                    double cost = ex.getCost(ap.getFastResults());//calculate cost for this appointment
+                    System.out.println(ap + " | Cost: " + cost);//print appointment and cost
                     examTotal += cost;
                 }
             }
@@ -451,17 +457,17 @@ class FileManager {
             total += examTotal;
         }
         System.out.println("Total revenue: " + total);
-    }
+    }//-----------------------------------------------------------------
 
-    public void revenuePerCategory() {
-        double total= 0;
+    public void revenuePerCategory(){
+        double total= 0;//total revenue from all categories combined 
         String[] categories ={"Imaging","Microbiological","Specialized"};
         for(String c: categories){
-            double categoryTotal =0;
+            double categoryTotal =0;//revenue generated by this category
             System.out.println("Category: " + c);
-            for (Exam ex: exams.values()){
+            for (Exam ex: exams.values()){//checks all exams to find those belonging to this category
                 if (ex.getCategoryName().equals(c)){
-                    for(Appointment ap: appointments.values()){
+                    for(Appointment ap: appointments.values()){// for each exam check all appointments
                         if (ap.getExamId() == ex.getId()){
                             double cost= ex.getCost(ap.getFastResults());
                             System.out.println(ap+" | Cost: " + cost);
@@ -472,7 +478,17 @@ class FileManager {
             }
             System.out.println("Total revenue for " + c + ": " + categoryTotal) ;
             total+= categoryTotal;
-        }
+        
         System.out.println("Total revenue: "+ total);
+        }
     }
-}
+
+}    
+
+
+        
+  
+    
+  
+
+

@@ -5,48 +5,29 @@ import java.util.HashMap;
 public class Main{
     //----------------Collection for the main menu-------------------
     public static HashMap<String,String> mainMenu=new HashMap<>();
-    mainMenu.put("1","Doctors");
-    mainMenu.put("2","Patients");
-    mainMenu.put("3","Exams");
-    mainMenu.put("4","Appointmets");
-    mainMenu.put("5","Statistics");
-    mainMenu.put("0","Exit");
+    
     //----------------------------Doctors menu-------------------------
     public static HashMap<String,String> doctorsMenu=new HashMap<>();
-    doctorsMenu.put("1","Add doctor");
-    doctorsMenu.put("2","Show all doctors");
-    doctorsMenu.put("3","Show doctor details");
-    doctorsMenu.put("4","Doctor apointments");
-    doctorsMenu.put("0","Back");
+    
     //--------------------------Patient menu ----------------------------------
     public static HashMap<String,String> patientsMenu=new HashMap<>();
-    patientsMenu.put("1","Add patient");
-    patientsMenu.put("2","Show all patients");
-    patientsMenu.put("3","Show patient details");
-    patientsMenu.put("0","Back");
+    
     //--------------------------Exam menu------------------------------------
     public static HashMap<String,String> examsMenu=new HashMap<>();
-    examsMenu.put("1","Add exam");
-    examsMenu.put("2","Show all exams");
-    examsMenu.put("3","Show exam details");
-    examsMenu.put("0","Back");
+   
     //-------------------------------Appointments menu---------------------------
     public static HashMap<String,String> appointmentsMenu=new HashMap<>();
-    appointmentsMenu.put("1","Add apointment");
-    appointmentsMenu.put("2","Show all appointments");
-    appointmentsMenu.put("3","Show apointments of a patient");
-    appointmentsMenu.put("4","Delete appointment");
-    appointmentsMenu.put("5","Show appointments by date");
-    appointmentsMenu.put("0","Back");
+    //-------------------------------Statistics Menu-------------------------------
+    public static HashMap<String,String> statisticsMenu=new HashMap<>();
     //----------------------method that shows a menu-----------------------
     
     public static void printMenu(HashMap<String,String> menu){
-        System.out,println("\n-------------------------");
+        System.out.println("\n-------------------------");
         for (String key :menu.keySet()){
-            System.out,println(key+" . "+menu.get(key));
+            System.out.println(key+" . "+menu.get(key));
 
         }
-        System.out,println("----------------------------");
+        System.out.println("----------------------------");
     }
 
     //-------------------Submenu loops------------------------------------
@@ -58,10 +39,10 @@ public class Main{
             String c = in.nextLine();
             
             switch (c){
-                case "1":fm.addDoctor(in); break ;
+                case "1":fm.addDoctorFromUser(in); break ;
                 case "2":fm.showAllDoctors(); break;
                 case "3": fm.showDoctorDetails(in); break;
-                case "4":fm.showDoctorAppointment(in); break;
+                case "4":fm.showDoctorAppointments(in); break;
                 case "0": back=true; break;
                 default : System.out.println("Invalid choice.");
 
@@ -81,7 +62,7 @@ public class Main{
             String c = in.nextLine();
             
             switch (c){
-                case "1":fm.addPatient(in); break ;
+                case "1":fm.addPatientFromUser(in); break ;
                 case "2":fm.showAllPatients(); break;
                 case "3": fm.showPatientDetails(in); break;
                 case "0": back=true; break;
@@ -101,7 +82,7 @@ public class Main{
             String c = in.nextLine();
             
             switch (c){
-                case "1":fm.addExam(in); break ;
+                case "1":fm.addExamFromUser(in); break ;
                 case "2":fm.showAllExams(); break;
                 case "3": fm.showExamDetails(in); break;
                 case "0": back=true; break;
@@ -116,17 +97,17 @@ public class Main{
 
     public static void appointmentsMenuLoop(Scanner in,FileManager fm){
         boolean back=false;
-        while ((back)) {
+        while ((!back)) {
             printMenu(appointmentsMenu);
             System.out.println("Choose : ");
             String c = in.nextLine();
             
             switch (c){
-                case "1":fm.addAppointment(in); break ;
+                case "1":fm.addAppointmentFromUser(in); break ;
                 case "2":fm.showAllAppointments(); break;
                 case "3": fm.showPatientAppointments(in); break;
                 case "4":fm.deleteAppointment(in); break;
-                case "5": fm.showAppointmentDate(in);break;
+                case "5": fm.showAppointmentsByDate(in);break;
                 case "0": back=true; break;
                 default : System.out.println("Invalid choice.");
                 
@@ -140,8 +121,17 @@ public class Main{
     public static void satisticsMenuLoop(Scanner in,FileManager fm){
         boolean back=false;
         while ((!back)) {
-            
-        
+          printMenu(statisticsMenu); 
+          System.out.println("Choose" );
+          String c = in.nextLine();
+          switch (c) {
+            case "1":fm.revenuePerPatient();break;
+            case "2":fm.revenuePerExam(); break;
+            case "3":fm.revenuePerCategory(); break;
+            case "0":back=true; break;
+                
+                
+          }
         }
     }
     
@@ -159,7 +149,44 @@ public class Main{
     //----------------------------MAIN--------------------------------
     public static void main (String[] args ){
         Scanner in =new Scanner(System.in);
-        FileManager fm=new File FileManager();
+        FileManager fm=new FileManager();
+        mainMenu.put("1","Doctors");
+        mainMenu.put("2","Patients");
+        mainMenu.put("3","Exams");
+        mainMenu.put("4","Appointmets");
+        mainMenu.put("5","Statistics");
+        mainMenu.put("0","Exit");
+
+        doctorsMenu.put("1","Add doctor");
+        doctorsMenu.put("2","Show all doctors");
+        doctorsMenu.put("3","Show doctor details");
+        doctorsMenu.put("4","Doctor apointments");
+        doctorsMenu.put("0","Back");
+
+        patientsMenu.put("1","Add patient");
+        patientsMenu.put("2","Show all patients");
+        patientsMenu.put("3","Show patient details");
+        patientsMenu.put("0","Back");
+
+        examsMenu.put("1","Add exam");
+        examsMenu.put("2","Show all exams");
+        examsMenu.put("3","Show exam details");
+        examsMenu.put("0","Back");
+
+        appointmentsMenu.put("1","Add apointment");
+        appointmentsMenu.put("2","Show all appointments");
+        appointmentsMenu.put("3","Show apointments of a patient");
+        appointmentsMenu.put("4","Delete appointment");
+        appointmentsMenu.put("5","Show appointments by date");
+        appointmentsMenu.put("0","Back");
+
+        statisticsMenu.put("1","Revenue per patient");
+        statisticsMenu.put("2","Revenue per exam");
+        statisticsMenu.put("3","revenue per category");
+        statisticsMenu.put("0","Back");
+
+
+        
 
         
         File f1= new File("doctors.txt");
@@ -183,7 +210,7 @@ public class Main{
         }
         else {
             System.out.println("Loading doctors.txt ...");
-            fm.loadDoctor("doctors.txt");
+            fm.loadDoctors("doctors.txt");
         }
         // PATIENTS
         if(!f2.exists()){
@@ -200,13 +227,13 @@ public class Main{
         }
         else {
             System.out.println("Loading patients.txt ...");
-            fm.loadPatient("patients.txt");
+            fm.loadPatients("patients.txt");
         }
          // EXAMS
         if(!f3.exists()){
             System.out.println("exams.txt not found. Creating initial exams...");
-            Specialized ex1= new Specialized("Specialized", 23, 80, 3, "Cardiology");
-            Microbiological ex2 =new Microbiological("Microbiological", 10, 40, 1, "Blood");
+            SpecializedExamination ex1= new SpecializedExamination("Specialized", 23, 80, 3, "Cardiology");
+            MicrobiologicalExamination ex2 =new MicrobiologicalExamination("Microbiological", 10, 40, 1, "Blood");
             ImagingExamination ex3=new ImagingExamination("Imaging", 5, 20, 8, "CT");
             fm.addExam(ex1);
             fm.addExam(ex2);
@@ -216,7 +243,7 @@ public class Main{
         }
         else {
             System.out.println("Loading exams.txt ...");
-            fm.loadPatient("exams.txt");
+            fm.loadExams("exams.txt");
         }
         //APPOINTMENTS
         if(!f4.exists()){
@@ -233,7 +260,7 @@ public class Main{
        }
         else {
             System.out.println("Loading appointments.txt ...");
-            fm.loadPatient("appointments.txt");
+            fm.loadAppointments("appointments.txt");
         }
 
 
@@ -272,22 +299,13 @@ public class Main{
         }
 
         //----------------Save all before exit---------------------------
-        fm.saveDoctor("doctors.txt");
-        fm.savePatient("patients.txt");
-        fm.saveExam("exams.txt");
-        fm.saveAppointment("appointments.txt");
+        fm.saveDoctors("doctors.txt");
+        fm.savePatients("patients.txt");
+        fm.saveExams("exams.txt");
+        fm.saveAppointments("appointments.txt");
 
 
         System.out.println("Data saved ! The program is finished successfully ! ");
-
-
-
-
-        
-
-
-
-
     } 
 
 }
