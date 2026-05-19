@@ -359,7 +359,7 @@ class FileManager {
             break;
         }
         System.out.println("Fast results? (Yes/No):");
-        boolean fastResults =Boolean.parseBoolean(in.nextLine());
+        boolean fastResults = in.nextLine().equalsIgnoreCase("yes");
         Appointment ap = new Appointment(idPatient, idExam, date, fastResults ) ;
         addAppointment(ap);
         System.out.println("Appointment added successfully");
