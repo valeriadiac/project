@@ -1,681 +1,489 @@
-import java.io*;
-import java.util
-import java.util.HashMap;*;
-
-
-
-public class  FileManager{
-    // --------4 hashmaps -------
-    HashMap<Integer,Doctor> doctors= new HashMap<>();
-    HashMap<Integer,Patient> patients= new HashMap<>();
-    HashMap<Integer,Exam> exams= new HashMap<>();
-    HashMap<Integer, Appointment> apointments= new HashMap<>();
-
-    // a common method that returns an array with the words from the file 
-    private String[] nLine(String line ){
-        String[] n = line.split(",");
-        // we divide the line into words every time we see the symbol ","
-                
-         // we delete the spases that might exist in a word
-        for(int i =0; i<n.length;i++){
-                n[i]=n[i].trim();
-
-
+import java.util.*;
+import java.io.*;
+public class FileManager {
+      //Creating four hashmaps
+    HashMap<Integer, Doctor> doctors = new HashMap<>();
+    HashMap<Integer, Patient> patients = new HashMap<>();
+    HashMap<Integer, Exam> exams = new HashMap<>();
+    HashMap<Integer, Appointment> appointments = new HashMap<>();
+    //Creating 4 methods for loading items from files to hashmaps
+    public void loadDoctors(String filePath) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))){
+            String line;
+            while ((line = reader.readLine()) != null){
+                String[] tokens = line.split(",");// devide the line in words every time ts sees " , " and then it creates an array with the words  
+                for (int i = 0; i<tokens.length; i++) tokens[i]= tokens[i].trim();// deletes the spaces that might exist in a word
+                Doctor d = new Doctor(Integer.parseInt(tokens[0]),//0=Id
+                                    tokens[1],//1=name
+                                    Integer.parseInt(tokens[2]),// 2=phone
+                                    tokens[3],// 3=speciality
+                                    Integer.parseInt(tokens[4]));//4=years of experience
+                doctors.put(d.getId(),d);// it adds the doctor in the hashmap
+            }
+            reader.close(); //Closing the file
         }
-        return n; 
-
-
+        catch (IOException e){ System.err.println("Error while reading file: " + e.getMessage());}
+    } //----------------------------------------------------------------------------------------------------------------------------------
+    public void loadPatients(String filePath){
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))){
+            String line;
+            while ((line = reader.readLine()) != null){
+                String[] tokens = line.split(",");
+                for (int i = 0; i<tokens.length; i++) tokens[i] = tokens[i].trim();
+                Patient p=new Patient(Integer.parseInt(tokens[0]), tokens[1],
+                                      Integer.parseInt(tokens[2]), tokens[3]);
+                patients.put(p.getId(),p);
+            }
+            reader.close(); //Closing the file
+        }
+        catch(IOException e) {System.err.println("Error while reading file: " + e.getMessage());}
+    }//-----------------------------------------------------------------------------------------------------------------
+    public void loadExams(String filePath) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))){
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] tokens = line.split(",");
+                for (int i = 0; i < tokens.length; i++ ) tokens[i] = tokens[i].trim();
+                String category = tokens[2];
+                Exam e = null;
+                while(e==null){// Να θεωρησουμε οτι θα δοθει μεσα απο το αρχειο σωστα εχαμσ 
+                    if (category.equals("Imaging")){
+                    e = new ImagingExamination(Integer.parseInt(tokens[0]), tokens[1],//0=id,1=examName
+                                               Integer.parseInt(tokens[3]), Double.parseDouble(tokens[4]),//3=maxslots,4=cost
+                                               Integer.parseInt(tokens[5]), tokens[6]);//5=doctorID,6=machineType
+                } else if (category.equals("Microbiological")){
+                    e = new MicrobiologicalExamination(Integer.parseInt(tokens[0]), tokens[1],//0=id,1=examName
+                                                       Integer.parseInt(tokens[3]), Double.parseDouble(tokens[4]),//3=maxslots,4=cost
+                                                       Integer.parseInt (tokens[5]), tokens[6]//5= doctorID   ,6=sampleType
+                    );
+                } else if (category.equals("Specialized")){
+                    e=new SpecializedExamination(Integer.parseInt(tokens[0]), tokens[1], Integer.parseInt(tokens[3]),//0=id,1=examName,3=maxslots
+                                            Double.parseDouble(tokens[4]), Integer.parseInt(tokens[5]), tokens[6]);//4=cost,5= doctorID   ,6=specialty
+                }
+                if (e != null) exams.put(e.getId(),e);// κατευθειαν βαζουμε χωρισ ιφ τοτε
+                else System.out.println("Error creating exam");
+                }
+            }
+        } catch (IOException e) {System.err.println("Error while reading file: " + e.getMessage());}
+    }//-----------------------------------------------------------------------------------------------------------------------------
+    public void loadAppointments(String filePath){
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))){
+            String line;
+            while ((line = reader.readLine()) != null){
+                String[] tokens =line.split(",");
+                for (int i = 0; i<tokens.length; i++)tokens[i]= tokens[i].trim();
+                Appointment ap = new Appointment(Integer.parseInt(tokens[0]), Integer.parseInt(tokens[1]),//0=id,1=patientId
+                                                Integer.parseInt(tokens[2]), tokens[3], Boolean.parseBoolean(tokens[4]));//2=examId,3=date,4=fastResults
+                appointments.put(ap.getAppointmentId(),ap);
+            }
+            reader.close(); //Closing the file
+        } catch (IOException e) {System.err.println("Error while reading file: " + e.getMessage());}
     }
-
-
-    // ------- 4 methods to load the Ites from file to hashmap ------------
-
-    // 1
-     public void loadDoctor (String fileName){
-        try (BufferedReader reader= new  BufferedReader(new FileReader (fileName))){
-            String line ; // every line from the file 
-            while((line=reader.readLine())!null) {
-                String[]  elements =nLine(line);
-                //0 =id
-                //1=name
-                //2=phone
-                //3=specialty
-                //4=years
-                Doctor d= new Doctor(
-                  Integer.parseInt(elements[0] ),
-                  elements[1],
-                  Integer.parseInt(elements[2]),
-                  elements[3],
-                  Integer.parseInt(elements[4])
-
-                );
-                doctors.put(d.getID(),d);
-    
-            }
-            reader.close();// close the file 
-
-        }catch (IOException e){
-            System.err.println("Error reading File :"+e.getMessage());
-        }
-     }//load the doctors file 
-
-
-     //2
-    public void loadPatient (String fileName){
-        try (BufferedReader reader= new  BufferedReader(new FileReader (fileName))){
-            String line ;
-            while((line=reader.readline())!null){
-                String[] elements=nLine(line);
-                Patient p=new Patient(
-                    Integer.parseInt(elements[0]),
-                    elements[1],
-                    Integer.parseInt(elements[2]),
-                    elements[3]
-            );
-            patients.put(p.getID,p) ;
-            
-            
-
-        }
-        reader.close();
-
-    }catch (IOException e){
-            System.err.println("Error reading File :"+e.getMessage());
-        }
-    }
-
-    //3 
-    public void loadExam (String fileName){
-        try (BufferedReader reader= new  BufferedReader(new FileReader (fileName))){
-            String line ;
-            while((line=reader.readline())!null){
-                String[] elements=nLine(line);
-                String category =elements[2];
-                Exam exam;
-                switch (category){
-                    case "Imaging":
-                        exam = new ImagingExamination(
-                            Integer.parseInt(elements[0]),
-                            elements[1],
-                            elements[2],
-                            elements[3],
-                            Integer.parseInt(elements[4]),
-                            Double.parseDouble(elements[5]),
-                            Integer.parseInt(elements[6])
-
-                        );
-                        break;
-                    case "Microbiological":
-                        exam=new Microbiological(
-                            Integer.parseInt(elements[0]),
-                            elements[1],
-                            elements[2],
-                            elements[3],
-                            Integer.parseInt(elements[4]),
-                            Double.parseDouble(elements[5]),
-                            Integer.parseInt(elements[6])
-
-                        );
-                        break;
-                    case "Specialized":
-                        exam =new Specialized(
-                            Integer.parseInt(elements[0]),
-                            elements[1],
-                            elements[2],
-                            elements[3],
-                            Integer.parseInt(elements[4]),
-                            Double.parseDouble(elements[5]),
-                            Integer.parseInt(elements[6])
-                        );
-                        break;
-                       
-                
-            
-            }
-            exams.put(exam.getId(),exam);
-        }
-    
-        reader.close();
-    }catch (IOException e){
-            System.err.println("Error reading File :"+e.getMessage());
-        }
-    }// end load exam 
-
-    //4
-     public void loadAppointment (String fileName){
-        try (BufferedReader reader= new  BufferedReader(new FileReader (fileName))){
-            String line ; // every line from the file 
-            while((line=reader.readLine())!null) {
-                String[]  elements =nLine(line);
-                
-                Appointment a= new Appointment(
-                  Integer.parseInt(elements[0]),
-                  Integer.parseInt(elements[1]),
-                  Integer.parseInt(elements[2]),
-                  Boolean.parseBoolean(elements[3]),
-                  elements[4]
-
-                );
-                apointments.put(a.getAppointmentId(),a);
-    
-            }
-            reader.close();// close the file 
-
-        }catch (IOException e){
-            System.err.println("Error reading File :"+e.getMessage());
-        }
-     }//end appointement load 
-
-
-
-     // -----------------------END--------------------------
-
-
-
-
-
-
-    
-    
-
-     //------- 4 methods that allow to write in a file for each hashmao------------
-     
-
-     //1
-     public void saveDoctor(String filename){
-        try (BufferedWriter writer=new BufferedWriter(new FileWriter(filename))){
-            for (Doctor d : doctors.values()){
-                writer.write(d.toStringFile());
+    //-------------------------------------------------------------------------------------------------------------------------------
+    //Creating 4 methods for saving items from hashmaps to files
+    public void saveDoctors(String filePath){
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))){
+            for (Doctor d:doctors.values()){
+                writer.write(d.getId() + ","
+                            + d.getName() + "," + d.getPhone() + "," 
+                            + d.getSpecialty() + "," + d.getYears());
                 writer.newLine();//we change the line for the next time we want to write somethig else in the file 
-
-                
-                
             }
-            writer.close();
-            
-        } catch(IOException e){
-        System.err.println("Error writing file : "+e.getMessage()); }
-    }
-    
-
-    //2
-    public void savePatient(String filename){
-        try (BufferedWriter writer=new BufferedWriter(new FileWriter(filename))){
-            for(Patient p : patients.values()){
-                writer.write(p.toStringFile());
-                writer.newLine();
-
-            }
-            writer.close();
-        } catch(IOException e){
-        System.err.println("Error writing file : "+e.getMessage()); }
+            writer.close(); 
+        } catch (IOException e) {System.err.println("Error while writing to file: " + e.getMessage());}
     }
 
-    //3
-    public void saveExam(String filename){
-        try (BufferedWriter writer=new BufferedWriter(new FileWriter(filename))){
-            for (Exam item : exams.values()){
-                if(item instanceof ImagingExamination)  {
-                    ImagingExamination im=(ImagingExamination) item;
-
-                    writer.write(im.toStringFile());
-                    writer.newLine();
-
+    public void savePatients(String filePath){
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))){
+            for (Patient p: patients.values()){
+                writer.write(p.getId() + "," + p.getName() + "," + p.getPhone() + "," + p.getEmail());
+                writer.newLine();//we change the line for the next time we want to write somethig else in the file 
+            }
+            writer.close();
+        } catch (IOException e) {System.err.println("Error while writing to file: " + e.getMessage());}
+    }//-----------------------------------------------------------------------------------------------------
+    public void saveExams(String filePath) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            for (Exam e: exams.values()){// e has sees only the methods from the superclass
+                if (e instanceof ImagingExamination){
+                    ImagingExamination im = (ImagingExamination) e;//downcasting in order to have access on the methods of the subclass
+                    writer.write(im.getId() + "," + im.getExamName() + "," + "Imaging" + "," + im.getMaxSlots() + "," 
+                                + im.getExamCost() + "," + im.getDoctorId() +"," + im.getMachineType());
+                } else if (e instanceof MicrobiologicalExamination){
+                    MicrobiologicalExamination mic = (MicrobiologicalExamination) e;//downcasting
+                    writer.write(mic.getId() + "," + mic.getExamName() + "," 
+                                + "Microbiological" + "," + mic.getMaxSlots() + "," 
+                                + mic.getExamCost() + "," + mic.getDoctorId() +"," + mic.getSampleType());
+                } else if (e instanceof SpecializedExamination){
+                    SpecializedExamination sp = (SpecializedExamination) e;//downcasting
+                    writer.write(sp.getId() + "," + sp.getExamName() + "," 
+                                + "Specialized" + "," + sp.getMaxSlots() + "," 
+                                + sp.getExamCost() + "," + sp.getDoctorId() +"," + sp.getSpecialty());
                 }
-
-                else if (item instanceof Microbiological){
-                    Microbiological mic=(Microbiological) item;
-
-                    writer.write(mic.toStringFile());
-                    writer.newLine();
-                }
-
-                else if (item instanceof Specialized) {
-                    Specialized sp = (Specialized ) item;
-                    writer.write(sp.toStringFile());
-                    writer.newLine();
-                }
+                writer.newLine();//we change the line for the next time we want to write somethig else in the file 
             }
             writer.close();
-
-            
-        }catch(IOException e){
-            System.err.println("Error writing file : "+e.getMessage()); }
-    }
-
-    //4
-     public void saveAppointment(String filename){
-        try (BufferedWriter writer=new BufferedWriter(new FileWriter(filename))){
-            for (Appointment i : apointments.values()){
-                writer.write(i.toStringFile());
-                writer.newLine();
-
-                
-                
+        } catch (IOException e) {System.err.println("Error while writing to file: " + e.getMessage());}
+    }//----------------------------------------------------------------------------------------------------
+    public void saveAppointments(String filePath){
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))){
+            for (Appointment ap: appointments.values()){
+                writer.write(ap.getAppointmentId() + "," + ap.getPatientId() + "," + ap.getExamId() + "," + ap.getDate() + "," + ap.getFastResults());
+                writer.newLine();//we change the line for the next time we want to write somethig else in the file 
             }
             writer.close();
-            
-        } catch(IOException e){
-        System.err.println("Error writing file : "+e.getMessage()); }
+        } catch (IOException e) {System.err.println("Error while writing to file: " + e.getMessage());}
+    }
+    //-------------------------------------------------------------------------------------------------------------
+    //Creating methods for adding items to hashmaps 
+    public void addDoctor(Doctor d) {
+        doctors.put(d.getId(),d);
     }
 
-
-    // -----------------------END--------------------------
-
-    //------------ 4 methods to add an Item in a Hashmap--------------
-
-
-    //1 
-    public void addDoctor(Doctor d){
-        doctors.put(d.getID(),d);
-    }
-    //2
     public void addPatient(Patient p){
-        patients.put(p.getID(),p);
+        patients.put(p.getId(), p);
     }
-    //3 
-    public void addExam(Exam ex){
-        exams.put(ex.getId(),ex);
+
+    public void addExam(Exam e) {
+        exams.put(e.getId(), e);
     }
-    //4 
+
     public void addAppointment(Appointment ap){
         appointments.put(ap.getAppointmentId(),ap);
     }
 
-    // -----------------------END--------------------------
-
-    //-------- 4 diferent methods to display all the Items in a Hashmap -----------
-    //1
+    //-------------------------------------------------------------------------------------------------------------
+    //Creating methods for displaying all the items from a hashmap
     public void showAllDoctors(){
-        for(Doctor d : doctors.values()){
-            System.out.println(d);
-        }
+        for (Doctor d: doctors.values()) System.out.println(d);
     }
 
-    //2 
-    public void showAllPatients(){
-        for(Patient p : patients.values() ){
-            System.out.println(p);
-        }
+    public void showAllPatients(){ 
+        for(Patient p:patients.values()) System.out.println(p);
     }
 
-    //3 display all exams(sorted based on the name of the exam)
+     // display all exams (sorted based on the name of the exam)
     public void showAllExams(){
-        exams.values().stream().sorted(Comparator.comparing(Exam::getExamName,String.CASE_INSENSITIVE_ORDER)).forEach(System.out::println);
+        exams.values().stream()
+            .sorted(Comparator.comparing(Exam::getExamName, String.CASE_INSENSITIVE_ORDER))
+            .forEach(System.out::println);
     }
 
-    //4
     public void showAllAppointments(){
-        for(Appointment ap : appointments.values()){
-            System.out.println(ap);
+        for (Appointment ap: appointments.values())System.out.println(ap);
+    }
+    //-------------------------------------------------------------------------------------------------------------
+    //methods for doctor
+    public void addDoctorFromUser(Scanner in) {
+        System.out.print("\nEnter doctor name: ");
+        String name = in.nextLine();
+        System.out.print("\nEnter doctor phone: ");
+        int phone= Integer.parseInt(in.nextLine());
+        System.out.print("\nEnter doctor's years of experience: ");
+        int years = Integer.parseInt(in.nextLine());
+        
+        String specialty ="";
+        while(specialty.isEmpty()){
+            System.out.println("Choose specialty:");
+            System.out.println("1. Cardiology");
+            System.out.println("2. Neurology");
+            System.out.println("3. Pulmonology"); 
+            System.out.println("4. Other");
+           
+            int choice = Integer.parseInt(in.nextLine());
+            if (choice == 1) specialty = "Cardiology";
+            else if (choice == 2) specialty ="Neurology";
+            else if (choice == 3) specialty = "Pulmonology";
+            else if(choice == 4) {
+                System.out.print("Enter specialty: ");
+                specialty = in.nextLine();
+            } else System.out.println("Invalid choice. Choose again.\n");
         }
-    }
-
-    // -----------------------END--------------------------
-
-
-    //--------methods for doctor ----------------------------
-    public void addDoctorFromUser(Scanner in){
-        System.out.println("Enter doctor name :  ");
-        String name =in.nextLine();
-
-        System.out.println("Enter doctor phone :  ");
-        String phone=in.nextLine();
-
-        System.out.println("Enter years of experience :  ");
-        int years=Integer.parseInt(in.nextLine());
-
-        //All specialities that are offered
-        System.out.println("Choose speciality: ");
-        System.out.println("1.Cardiology");
-        System.out.println("2.Radiology");
-        System.out.println("3.Neurology");
-        int choice =Integer.parseInt(in.nextLine());
-
-        String speciality;
-        if(choice==1) specialty="Cardiology";
-        if(choice==2) specialty="Radiology";
-        if(choice==3) specialty="Neurology";
-
-        Doctor d=new Doctor(name,phone,speciality,years);
+        Doctor d = new Doctor(name, phone, specialty, years);
         addDoctor(d);
-        System.out.println(" Doctor added successfully! ");
-
+        System.out.println("Doctor was added successfully.");
     }
-    //----------------------------1---------------------------------------
-    public int doctorHelper(Scanner in ){
-        while(true){
-            showAllDoctors();// the system shows all the doctors
-                // the person selects which doctor he wants
-            System.out.println("Enter doctor ID ");
-            int id =Integer.parseInt(in.nextLine());
-        
-            Doctor d= doctors.get(id);
 
-                //the system control if the doctor exists
-        
-            if(d==null){
-                System.out.println("Doctor not found !"); 
-                continue;// the id is requested again
+    public int doctorHelper(Scanner in){
+        while(true){
+            showAllDoctors();//the system shows all doctors
+            System.out.print("\nEnter Doctor id: ");//then the user has to choose 
+            int id = Integer.parseInt(in.nextLine());
+            Doctor d = doctors.get(id);
+            //the system checks if the doctor exists
+            if (d == null){
+                System.out.println("\nDoctor not found");
+                continue; //id input required again
             }
-            System.out.println("Doctor details: ");
-            System.out.println(d);
+            System.out.println("Doctor found: " + d);
             return id;
         }
     }
-    
 
-    //------------------------------3---------------------
     public void showDoctorDetails(Scanner in){
-        int id=helper(in);
-        for (Exam ex: exams.values()){
-            if(ex.getDoctorId()==id) {System.out.println(ex);}
-                
-            }//end
+        int id = doctorHelper(in);
+        for (Exam e: exams.values()) if (e.getDoctorId() == id) System.out.println(e);
+    }
+
+    public void showDoctorAppointments(Scanner in){
+        int id = doctorHelper(in);
+        for (Exam e: exams.values()) {
+            if (e.getDoctorId() == id) {
+                for (Appointment ap: appointments.values()) if (ap.getExamId() == e.getId()) System.out.println(ap);
+            }
         }
     }
-    //------------------------------4-----------------
-    public void showDoctorAppointment(Scanner in ){
-        int id=helper(in);
+
+    //-------------------------------------------------------------------------------------------------------------
+    //methods for patient
+    public void addPatientFromUser(Scanner in){
+        System.out.print("\nEnter patient name: ");
+        String name = in.nextLine();
+        System.out.print("\nEnter patient phone: ");
+        int phone = Integer.parseInt(in.nextLine());
+        System.out.print("\nEnter patient email: ");
+        String email = in.nextLine();
+
+        Patient p = new Patient(name, phone, email);
+        addPatient(p);
+        System.out.println("Patient was added successfully.");
+    }
+
+    public int patientHelper(Scanner in){
+        while(true){
+            showAllPatients();//the system shows all patients
+            System.out.print("\nEnter patient id: ");//the user has to choose
+            int id = Integer.parseInt(in.nextLine());
+            Patient p = patients.get(id);
+            //the system checks if the patient exists
+            if (p == null){
+                System.out.println("\nPatient not found");
+                continue; //id input required again
+            }
+            System.out.println("\nPatient found: " + p);
+            return id;
+        }
+    }
+
+    public void showPatientDetails(Scanner in){
+        int id = patientHelper(in);
+        System.out.println("Appointments for this patient: ");
+        for (Appointment ap: appointments.values()) if (ap.getPatientId() == id) System.out.println(ap);
+    }
+    //-------------------------------------------------------------------------------------------------------------
+    //methods for exams
+    public void addExamFromUser (Scanner in) {
+        System.out.print("Enter exam name: ");
+        String name = in.nextLine();
+        System.out.print("Enter max slots per day: ");
+        int maxSlots = Integer.parseInt(in.nextLine());
+        System.out.print("Enter cost: ");
+        double cost = Double.parseDouble(in.nextLine());
+        int doctorId = doctorHelper(in);
+        Exam ex = null;//will hold the created exam object
+        while (ex==null){//loop until the user selects a valid exam category and details
+        System.out.println("Pick exam category:");
+        System.out.println("1. Imaging");
+        System.out.println("2. Microbiological");
+        System.out.println("3. Specialized");
+        int choice = Integer.parseInt(in.nextLine());
+        switch (choice){
+            case 1:
+                System.out.println("Choose machine type:");
+                System.out.println("1. MRI");
+                System.out.println("2. CT");
+                System.out.println("3. X-Ray");
+                int choice2 = Integer.parseInt(in.nextLine());
+                String im="";
+                if (choice2 == 1) im= "MRI";
+                else if (choice2 == 2) im ="CT";
+                else if (choice2 == 3) im = "X-Ray";
+                ex = new ImagingExamination(name, maxSlots, cost, doctorId, im);
+                break;
+            case 2:
+                System.out.println("Choose sample:");
+                System.out.println("1. Blood");
+                System.out.println("2. Urine");
+                System.out.println("3. Swab");
+                int choice3 = Integer.parseInt(in.nextLine());
+                String sample ="";
+                if (choice3 == 1) sample="Blood";
+                else if (choice3 ==2) sample ="Urine";
+                else if (choice3==3) sample= "Swab";
+                ex =new MicrobiologicalExamination(name,maxSlots, cost, doctorId,sample);
+                break;
+            case 3:
+                System.out.println("Choose specialty:");
+                System.out.println("1. Cardiology");
+                System.out.println("2. Neurology");
+                System.out.println("3. Pulmonology");
+                int choice4 = Integer.parseInt(in.nextLine());
+                String specialty = "";
+                if (choice4 == 1) specialty = "Cardiology";
+                else if (choice4 == 2)specialty = "Neurology";
+                else if (choice4==3) specialty= "Pulmonology";
+                ex = new SpecializedExamination(name, maxSlots,cost, doctorId,specialty);
+                break;
+            }
+            if (ex==null) System.out.println("Invalid choice"); 
+        }  
+        addExam(ex);
+        System.out.println("Added the exam successfully");
+        }
+    //----------------------------------------------------------------------
+    public int examHelper(Scanner in) {
+        while(true){
+            showAllExams();
+            System.out.print("\nEnter exam id: ");
+            int id =Integer.parseInt(in.nextLine());
+            Exam ex=exams.get(id);
+            if (ex ==null) {
+                System.out.println("Could not find exam");
+                continue; //id input required again
+            }
+            System.out.println("Exam found: " + ex);
+            return id;      
+        }
+    }//------------------------------------------------------------------------
+    public void showExamDetails(Scanner in){
+        int id =examHelper(in);
+        System.out.println("Appointments for this exam:\n");
+        for(Appointment ap:appointments.values()) if (ap.getExamId() == id) System.out.println(ap);
+    }
+    //-------------------------------------------------------------------------------------------------------------
+    //methods for appointments
+    public void addAppointmentFromUser(Scanner in) {
+        int idPatient = patientHelper(in);
+        int idExam= examHelper(in);
+        Exam ex = exams.get(idExam);
+        String date;
+        while(true){
+            System.out.print("Enter date (DD:MM:YYYY): ");
+            date = in.nextLine();
+            if (!date.matches("\\d{2}:\\d{2}:\\d{4}")){
+                System.out.println("Invalid format please enter the date again ");
+                continue;
+            }
+            int count = 0;//controls if there is any appointment available in an specific date 
+            for (Appointment ap:appointments.values()) if (ap.getExamId() ==idExam && ap.getDate().equals(date)) count++;
+            if (count>= ex.getMaxSlots()){
+                System.out.println("No available appointments. Choose a different date");
+                continue;
+            }
+            break;
+        }
+        System.out.println("Fast results? (Yes/No):");
+        boolean fastResults = in.nextLine().equalsIgnoreCase("yes");
+        Appointment ap = new Appointment(idPatient, idExam, date, fastResults ) ;
+        addAppointment(ap);
+        System.out.println("Appointment added successfully");
+    }//----------------------------------------------------------------------------
+    public void deleteAppointment(Scanner in){
+        Appointment ap= null;
+        int id;
+        while (true) {
+            showAllAppointments();
+            System.out.print("Enter appointment id:");
+            id = Integer.parseInt(in.nextLine());
+            ap = appointments.get(id);
+            if(ap==null) {
+                System.out.println("Could not find appointment");
+                continue; //id input required again
+            }
+            break;
+        }
+        System.out.println("Are you sure you want to delete the appointment? (Yes/No): ");
+        boolean answer = in.nextLine().equalsIgnoreCase("yes");
+        if (answer){
+            appointments.remove(id);
+            System.out.println("Appointment deleted");
+        } else System.out.println("Deletion cancelled");
+    }
+
+    public void showAppointmentsByDate(Scanner in){
+        String date;
+        while(true) {
+            System.out.print("Enter date (DD:MM:YYYY): ");
+            date = in.nextLine();
+            if (!date.matches("\\d{2}:\\d{2}:\\d{4}")){
+                System.out.println("Invalid format please enter the date again ");
+                continue;
+            }
+            break;
+        }
+        System.out.println("Appointments for " + date );
+        for (Appointment appointment : appointments.values()){
+            if (appointment.getDate().equals(date)) {
+                Patient p=patients.get(appointment.getPatientId());
+                Exam ex = exams.get(appointment.getExamId());
+                System.out.println(appointment.toString() + " | Patient Name: " + p.getName() + " | Exam Name: " + ex.getExamName());
+            }
+        }
+    }
+
+    public void showPatientAppointments(Scanner in){
+        int id =patientHelper(in);
+        System.out.println("Appointments for this patient: \n");
+        for(Appointment ap:appointments.values()) if(ap.getPatientId()==id) System.out.println(ap);
+    }
+    //-------------------------------------------------------------------------------------------------------------
+    //methods to calculate the statistics
+    public void revenuePerPatient(){
+        double total= 0;
+        for (Patient p: patients.values()){
+            double patientTotal = 0;// revenue for specific patient
+            System.out.println("\nPatient: " + p.getName());
+            for(Appointment ap:appointments.values()){//check all appointments to find those belonging to this patient 
+                if (ap.getPatientId() == p.getId()) {
+                    Exam exam = exams.get(ap.getExamId());// retrieve the exam linked to the appointment
+                    double cost = exam.getCost(ap.getFastResults());// calculate cost
+                    System.out.println(ap + " | Cost: " + cost);//print appointment details 
+                    patientTotal += cost;
+                }
+            }
+            System.out.println("\nTotal revenue for " + p.getName() + ": " + patientTotal);
+            total +=patientTotal;
+        }
+        System.out.println("\nTotal revenue: " + total);
+    }
+    //----------------------------------------------------------------------------------------------
+    public void revenuePerExam(){
+        double total =0;
         for (Exam ex: exams.values()){
-            if (ex.getDoctorId()==id){
-                for(Appointment ap : appointments.values()){
-                    if(ap.getExamId()==ex.getId()){
-                        System.out.println(ap);
+            double examTotal = 0;//revenue generated by this specific exam
+            System.out.println("\nExam: "+ex.getExamName());
+            for(Appointment ap:  appointments.values()){//check all appointments to find thoe linked to this exam
+                if (ap.getExamId() == ex.getId()){
+                    double cost = ex.getCost(ap.getFastResults());//calculate cost for this appointment
+                    System.out.println(ap + " | Cost: " + cost);//print appointment and cost
+                    examTotal += cost;
+                }
+            }
+            System.out.println("\nTotal revenue for " + ex.getExamName()+": "+ examTotal);
+            total += examTotal;
+        }
+        System.out.println("\nTotal revenue: " + total);
+    }//-----------------------------------------------------------------
+    public void revenuePerCategory(){
+        double total= 0;//total revenue from all categories combined 
+        String[] categories ={"Imaging","Microbiological","Specialized"};
+        for(String c: categories){
+            double categoryTotal =0;//revenue generated by this category
+            System.out.println("\nCategory: " + c);
+            for (Exam ex: exams.values()){//checks all exams to find those belonging to this category
+                if (ex.getCategoryName().equals(c)){
+                    for(Appointment ap: appointments.values()){// for each exam check all appointments
+                        if (ap.getExamId() == ex.getId()){
+                            double cost= ex.getCost(ap.getFastResults());
+                            System.out.println(ap+" | Cost: " + cost);
+                            categoryTotal +=cost ;
+                        }
                     }
                 }
             }
+            System.out.println("\nTotal revenue for " + c + ": " + categoryTotal) ;
+            total+= categoryTotal;
         }
-        
+        System.out.println("\nTotal revenue: "+ total);
     }
-
-
-    // methods for patient 
-
-    //------------------------------------------
-    public int patientHelper(Scanner in ){
-        while(true){
-            showAllPatients();// the system shows all the doctors
-                // the person selects which doctor he wants
-            System.out.println("Enter patient ID:");
-            int id =Integer.parseInt(in.nextLine());
-        
-            Patient p= patients.get(id);
-
-                //the system control if the doctor exists
-        
-            if(d==null){
-                System.out.println("Patient not found !"); 
-                continue;// the id is requested again
-            }
-            System.out.println("Patient details: ");
-            System.out.println(d);
-            return id;
-        }
-    }
-    //--------------------1--------------------
-    public void addPatientFromUser(Scanner in){
-        System.out.println("Enter Patient name: ");
-        String name = in.nextLIne();
-
-        System.out.println("Enter patient phone: ";)
-        int phone =Integer.parseInt(in.nextLine());
-
-        System.out.println("Enter Patient email: ");
-        String email = in.nextLIne();
-        Patient p= new Patient(name,phone,email);
-        addPatientp(p);
-        System.out.println("Patient added successfully!");
-    }
-    //----------------------3-------------------
-    public void showPatientDetails(Scanner in ){
-        int id =patientHelper(in);
-        System.out.println("Appointmets of this patient: ");
-        for (Appointment ap: apointments.values()){
-            if(ap.getPatientId==id){
-                System.out.println(ap);
-            }
-        }
-    }
-
-    //------------------methods for exams----------------------------
-
-    //-----------------1------------------------
-    public void addExamFromUser(Scanner in ){
-        System.out.println("Enter exam name: ");
-        String name=in.nextLIne();
-        System.out.println("Enter maximum slots per day: ");
-        int maxSlots=Integer.parseInt(in.nextLine());
-        System.out.println("Enter the cost: ");
-        double cost=Double.parseDouble(in.nextLine());
-
-        int  id=doctorHelper(in);
-
-        //shows the categories
-        System.out.println("Choose exam category: ");
-        System.out.println("1. Imaging Examination");
-        System.out.println("2. Microbiological Examination");
-        System.out.println("3. Specialized Examination");
-
-        int choice1=Integer.parseInt(in.nextLine());
-        String category;
-        String extra;
-        if (choice1==1){
-            category=Imaging;
-            System.out.println("Choose machine type: ");
-            System.out.println("1.MRI");
-            System.out.println("2.CT");
-            System.out.println("3.X-Ray");
-            int choice2=Integer.parseInt(in.nextLine());
-            if (choice2==1) extra="MRI";
-            if (choice2==2) extra="CT";
-            if (choice2==3) extra="X-Ray";
-            ImagingExamination ex=new ImagingExamination(name,maxSlots,cost,id,extra);
-        }
-        else if (choice1==2){
-            category="Microbiological";
-            System.out.println("Choose sample type: ");
-            System.out.println("1.Blood");
-            System.out.println("2.Urine");
-            System.out.println("3.Swab");
-            int choice2=Integer.parseInt(in.nextLine());
-            if (choice2==1) extra="Blood";
-            if (choice2==2) extra="Urine";
-            if (choice2==3) extra="Swab";
-            Microbiological ex=new Microbiological(name,maxSlots,cost,id,extra);
-
-        }
-        else if (choice1==3){
-            category="Specialized";
-            System.out.println("Choose speciality : ");
-            System.out.println("1.Cardiology");
-            System.out.println("2.Neurology");
-            System.out.println("3.Pulmonology");
-            int choice2=Integer.parseInt(in.nextLine());
-            if (choice2==1) extra="Cardiology";
-            if (choice2==2) extra="Neurology";
-            if (choice2==3) extra="Pulmonology";
-            Specialized ex=new Specialized(name,maxSlots,cost,id,extra);
-
-        }
-
-        //crating the class exam 
-        addExam(ex);
-        System.out.println("Added the exam successfully!");
-
-
-    }
-    //------------------END----------------------------------------------------
-
-
-    //collects an exam from the list
-    public int helperExam(Scanner in){
-        while(true){
-            System.out.println("Enter exam ID from the list: ");
-            showAllExams();
-            int id=Integer.parseInt(in.nextLine());
-            Exam ex=exam.get(id);
-
-        
-            if(ex==null){
-                System.out.println("Exam not found !"); 
-                continue;// the id is requested again
-            }
-            System.out.println("Exam details: ");
-            System.out.println(ex);
-            return id;
-        
-
-
-    }//-----------------END------------------------
-
-
-    
-    // --------------------------shows exam details--------------------
-    public void showExamDetails(Scanner in){
-        int id=helperExam(in);
-        System.out.println("Appointments for this exam: ");
-
-        for(Appointment ap: appointments.values()){
-            if(ap.getExamId()==id) {System.out.println(ap);}
-        }
-    }
-    //--------------END---------------------------------------------------
-
-
-    //methods for appointments
-
-   
-
-   public void addAppointmentFromUSer(Scanner in){
-    int idpatient=patientHelper(in);
-    int idExam=helperExam(in);
-    while(true){
-        System.out.println("Enter date (DD:MM:YYYY):  ");
-        String date=in.nextLine();
-        
-        if(!date.matches("\\d{2}:\\d{2}\\d{4}")){
-            System.out.println("Invalid date format ! Try again. ");
-            continue;
-        }
-        // controls if there is any appointment available in an specific date
-        int count=0 ;
-
-        for(Appointmentap:appointments.values()){
-            if(ap.getExamId()==idExam && ap.getDate().equals(date)){
-                count++;
-            }
-        }
-        if (count>=ex.getMaxSlots()){
-            System.out.println("No available slots for this date. Choose another date.");
-            continue;
-        }
-        break;
-
-
-    }
-    System.out.println("Fast results? (yes / no ): ");
-    boolean fast=in.nextLine().equalsIgnoreCase("yes");
-    Appointment ap =new Appointment(idpatient,idExam,date,fast);
-    addAppointment(ap);
-    System.out.println("Appointment added successfully!");
-
-   }  
-   //-------------------------END-----------------------------
-   
-   
-   // to delete an appointment 
-   public void deleteAppointment(Scanner in){
-    while(true){
-        showAllAppointments();
-        System.out.println("Enter appointment ID to delete: ");
-        int id =Integer.parseInt(in.nextLine());
-        Appointment ap =appointments.get(id);
-        if(ap++null){
-            System.out.println("Appointment not fount! Try again ");
-            continue;
-        }
-        break;
-    }
-    System.out.println(" Are you sure you want to delete this appointment ? : ");
-    boolean answer=in.nextLine().equalsIgnoreCase("yes");
-    if(answer){
-        appointments.remove(id);
-        System.out.println("Appointment deleted successfully!");
-    }
-    else{System.out.println("Deletion cancelled . ");}
-   }
-   //------------------------END-------------------------------
-
-   // show appointment based on a date 
-   public void showAppointmentDate(Scanner in){
-    Scanner date ;
-    while(true){
-        System.out.println("Enter date (DD:MM:YYYY):  ");
-        String date=in.nextLine();
-        
-        if(!date.matches("\\d{2}:\\d{2}\\d{4}")){
-            System.out.println("Invalid date format ! Try again. ");
-            continue;
-        }
-        break;
-
-    }
-    System.out.println("Appointmets for date:  "+date);
-    for (Appointment ap:appointments.values()){
-        if (ap.getDate().equals(date)){
-            Patient p= patients.get(ap.getPatientId());
-            Exam ex=exams.get(ap.getExamId());
-            System.out.println(ap.toString+" | Patient Name "+p.getName()+
-            " | Exam Name "+ex.getExamName());
-        }
-    }
-    
-    }
-
-    //--------------------END---------------------------------------
-     public void showPatientAppointments(Scanner in ){
-        int id=patientHelper(in);
-        System.out.println("Appointments for patient ID: "+id);
-        for(Appointment ap : apointments.values()){
-            if(ap.getPatientId()==id){System.out.println(ap);}
-
-        }
-
-    }
-
-    //--------------------------------STAISTICS--------------------------
-    public void statisticsPerPatient(){
-        System.err.println("-----------Revenue per Patient--------------------");
-        double n1=0;// total revenue from all patients
-        for (Patient p:patients.values()){
-            // for every patient
-            double n2=0;// revenue from the specific patient
-            System.out.println("\nPatient: "+p.getName()+"(ID:"+p.getID()+" )");
-            for (Appointment ap : appoointments.values()){
-                // for every appointment
-                // if the appointment is for the specific patient
-                if(ap.getPatientId()==p.getID()){
-                    Exam ex=exams.get(ap.getExamId());// find the exam for this appointment
-                    // calculate the cost for the exam :
-                    double cost=ex.getCost(ap.getFastResults());
-                    System.out.println(" Appointment ID: "+ap.getAppointmentId());
-                    System.out.println(" Exam : "+ex.getExamName());
-                    System.out.println(" Date: "+ap.getDate());
-                    System.out.println(" Fast Results"+ap.getFastResults());
-                    System.out.println(" Cost: "+cost);   
-                    n2+=cost;// add the cost to the revenue             
-
-
-                }
-            }
-            System.out.println("Total revenue from this patient : "+n2);
-            n1+=n2
-        }
-        System.out.println(" Total revenue from all patients "+n1);
-
-    }
-}
-
-
-    
+}    
