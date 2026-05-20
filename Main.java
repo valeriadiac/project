@@ -105,7 +105,7 @@ public class Main{
     }
 
 
-    public static void satisticsMenuLoop(Scanner in,FileManager fm){
+    public static void statisticsMenuLoop(Scanner in,FileManager fm){
         boolean back=false;
         while ((!back)) {
           printMenu(statisticsMenu); 
@@ -254,7 +254,7 @@ public class Main{
                     appointmentsMenuLoop(in,fm);
                     break;
                 case "5":
-                    satisticsMenuLoop(in,fm);
+                    statisticsMenuLoop(in,fm);
                     break;
                 case "0":
                     running =false;
