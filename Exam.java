@@ -1,6 +1,15 @@
-public abstract class Exam {
+/* 
+MYRTO ANASTASIADI ALEXIOU
+AM: 3250008
+Webmail: p3250008@aueb.gr
+--------------------------
+VALERIA DIACONU
+AM: 3250238
+Webmail: p3250238@aueb.gr 
+*/
 
-    private static int nextID = 0;
+public abstract class Exam {
+    private static int nextId = 0;
     private int id;
     private String examName;
     private String categoryName;
@@ -8,75 +17,45 @@ public abstract class Exam {
     protected double cost;
     private int doctorId;
 
-    Exam(String examName, String categoryName, int maxSlots, double cost, int doctorId) {
-        this.id = nextID++;
+    //Constructor for loading examination from file
+    public Exam(String examName, String categoryName, int maxSlots, double cost, int doctorId) {
+        this.id = ++nextId;
         this.examName = examName;
         this.categoryName = categoryName;
         this.maxSlots = maxSlots;
         this.cost = cost;
         this.doctorId = doctorId;
     }
-
-    Exam(int id,String examName, String categoryName, int maxSlots, double cost, int doctorId ) {
+    //Constructor for new examination
+    public Exam(int id, String examName, String categoryName, int maxSlots, double cost, int doctorId) {
         this.id = id;
-        if (id >= nextID) nextID = id + 1;
         this.examName = examName;
         this.categoryName = categoryName;
         this.maxSlots = maxSlots;
         this.cost = cost;
         this.doctorId = doctorId;
+        if (id > nextId) nextId = id;
     }
 
-    public int getId() {
-        return id;
-    }
+    //getters
+    public int getId() {return id;}
 
-    public String getCategoryName() {
-        return categoryName;
-    }
+    public String getCategoryName() {return categoryName;}
 
-    public int getMaxSlots() {
-        return maxSlots;
-    }
+    public int getMaxSlots() {return maxSlots;}
 
-    public double getExamCost() {
-        return cost;
-    }
+    public double getExamCost() {return cost; }
 
-    public int getDoctorId() {
-        return doctorId;
-    }
+    public int getDoctorId() { return doctorId;}
 
-    public String getExamName() {
-        return examName;
-    }
+    public String getExamName() { return examName;}
 
-    public void setExamName(String examName) {
-        this.examName = examName;
-    }
-
-    public void setMaxSlots(int maxSlots) {
-        this.maxSlots = maxSlots;
-    }
-
-    public void setCost(double cost) {
-        this.cost = cost;
-    }
-
-    public void setDoctorId(int doctorId) {
-        this.doctorId = doctorId;
-    }
-
+    //abstract method getCost()
     public abstract double getCost(boolean fastResults);
-
-      
-@Override
-    public String toString(){
+    //toString method
+    @Override
+    public String toString() {
         return String.format("Exam ID: %d | Name: %s | Category: %s | Max Slots: %d | Cost: %.2f | Doctor ID: %d",
                 id, examName, categoryName, maxSlots, cost, doctorId);
-    }
-      
-    public String toStringFile() {
-        return id + "," + examName + "," + categoryName + "," + maxSlots + "," + cost + "," + doctorId;
     }
 }

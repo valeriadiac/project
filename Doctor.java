@@ -1,55 +1,47 @@
-public class Doctor extends Person {
+/* 
+MYRTO ANASTASIADI ALEXIOU
+AM: 3250008
+Webmail: p3250008@aueb.gr
+--------------------------
+VALERIA DIACONU
+AM: 3250238
+Webmail: p3250238@aueb.gr 
+*/
 
-    private static int nextID= 0;
+public class Doctor extends Person {
+    private static int nextId= 0;
     private int id;
     private String specialty;
     private int years;
 
+    // Constructor for loading doctor from file
     public Doctor(String name, int phone, String specialty, int years) {
-
         super(name, phone);
-        this.id = nextID++;
+        this.id = ++nextId;
         this.specialty = specialty;
         this.years = years;
 
     }
-
+    // Constructor for new doctor
     public Doctor(int id, String name, int phone, String specialty, int years) {
-
         super(name, phone);
         this.id = id;
-        if (id >= nextID) nextID = id +1;
         this.specialty = specialty;
         this.years = years;
+        if (id > nextId) nextId = id;
     }
 
-    public int getID() {
-        return id;
-    }
+    //getters
+    public int getId() {return id; }
 
-    public String getSpecialty() {
-        return specialty;
-    }
+    public String getSpecialty() {return specialty; }
 
-    public int getYears() {
-        return years;
-    }
-
-    public void setSpecialty(String specialty) {
-        this.specialty = specialty;
-    }
-
-    public void setYears(int years) {
-        this.years = years;
-    }
-
+    public int getYears() {return years; }
+    
+    //toString method
     @Override
     public String toString() {
         return String.format("Doctor ID: %d | Name: %s | Phone: %d | Specialty: %s | Years of Experience: %d",
                 id, getName(), getPhone(), specialty, years);
-    }
-
-    public String toStringFile() {
-        return id + "," + getName() + "," + getPhone() + "," + specialty + "," + years;
     }
 }

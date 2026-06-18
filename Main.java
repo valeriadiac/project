@@ -1,4 +1,12 @@
-
+/* 
+MYRTO ANASTASIADI ALEXIOU
+AM: 3250008
+Webmail: p3250008@aueb.gr
+--------------------------
+VALERIA DIACONU
+AM: 3250238
+Webmail: p3250238@aueb.gr 
+*/
 import java.io.*;
 import java.util.Scanner;
 import java.util.HashMap;
@@ -32,7 +40,7 @@ public class Main{
         boolean back=false;
         while ((!back)) {
             printMenu(doctorsMenu);
-            System.out.print("Choose : ");
+            System.out.print("Choose an option: ");
             String c = in.nextLine();
             switch (c){
                 case "1":fm.addDoctorFromUser(in); break ;
@@ -49,7 +57,7 @@ public class Main{
         boolean back=false;
         while ((!back)) {
             printMenu(patientsMenu);
-            System.out.print("Choose : ");
+            System.out.print("Choose an option: ");
             String c = in.nextLine();
             switch (c){
                 case "1":fm.addPatientFromUser(in); break ;
@@ -65,7 +73,7 @@ public class Main{
         boolean back=false;
         while ((!back)) {
             printMenu(examsMenu);
-            System.out.print("Choose : ");
+            System.out.print("Choose an option: ");
             String c = in.nextLine();
             switch (c){
                 case "1":fm.addExamFromUser(in); break ;
@@ -82,12 +90,12 @@ public class Main{
         boolean back=false;
         while ((!back)) {
             printMenu(appointmentsMenu);
-            System.out.print("Choose : ");
+            System.out.print("Choose an option: ");
             String c = in.nextLine();
             switch (c){
                 case "1":fm.addAppointmentFromUser(in); break ;
                 case "2":fm.showAllAppointments(); break;
-                case "3": fm.showPatientAppointments(in); break;
+                case "3": fm.showPatientDetails(in); break;
                 case "4":fm.deleteAppointment(in); break;
                 case "5": fm.showAppointmentsByDate(in);break;
                 case "0": back=true; break;
@@ -101,7 +109,7 @@ public class Main{
         boolean back=false;
         while ((!back)) {
           printMenu(statisticsMenu); 
-          System.out.print("Choose : ");
+          System.out.print("Choose an option: ");
           String c = in.nextLine();
           switch (c) {
             case "1":fm.revenuePerPatient();break;
@@ -148,13 +156,13 @@ public class Main{
 
         statisticsMenu.put("1","Revenue per patient");
         statisticsMenu.put("2","Revenue per exam");
-        statisticsMenu.put("3","revenue per category");
+        statisticsMenu.put("3","Revenue per category");
         statisticsMenu.put("0","Back");
 
         File f1= new File("doctors.txt");
         File f2= new File("patients.txt");
         File f3= new File("exams.txt");
-        File f4= new File("appointmets.txt");
+        File f4= new File("appointments.txt");
 
         // if file doesnt exists creat new and load it in the collections
         if(!f1.exists()){
@@ -173,9 +181,9 @@ public class Main{
         // PATIENTS
         if(!f2.exists()){
             System.out.println("patients.txt not found. Creating initial patients.");
-            Patient p1=new Patient("Giorgos",87534567,"gior@.gmail.com");
-            Patient p2=new Patient("Mary",45678905,"mary@gmail.com");
-            Patient p3=new Patient("Nicol",854567897,"nicol@gmail.com");
+            Patient p1=new Patient("Giorgos",875,"gior@.gmail.com");
+            Patient p2=new Patient("Mary",456,"mary@gmail.com");
+            Patient p3=new Patient("Nicol",854,"nicol@gmail.com");
             fm.addPatient(p1);
             fm.addPatient(p2);
             fm.addPatient(p3);
@@ -231,7 +239,7 @@ public class Main{
          boolean running =true;
          while(running){
             printMenu(mainMenu);
-            System.out.print("Choose: ");
+            System.out.print("Choose an option: ");
             String choice=in.nextLine();
             switch (choice){
                 case "1":
@@ -242,6 +250,7 @@ public class Main{
                     break;
                 case "3":
                     examsMenuLoop(in,fm);
+                    break;
                 case "4":
                     appointmentsMenuLoop(in,fm);
                     break;
@@ -260,6 +269,6 @@ public class Main{
         fm.savePatients("patients.txt");
         fm.saveExams("exams.txt");
         fm.saveAppointments("appointments.txt");
-        System.out.println("Data saved ! The program is finished successfully ! ");
+        System.out.println("Data saved! The program is finished successfully! ");
     } 
 }
