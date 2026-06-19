@@ -10,7 +10,7 @@
 ## 🛠️ Tech Stack & Αρχιτεκτονική
 * **Γλώσσα:** Java (100% Terminal-based)
 * **Αρχές OOP:** Κληρονομικότητα, Πολυμορφισμός, Αφαίρεση (Abstract classes), Ενθυλάκωση.
-* **Δομή Κλάσεων:** `Main`,'FileManager', `Person`, `Doctor`, `Patient`, `Appointment`, `FileManager` και η ιεραρχία εξετάσεων (`Exam`, `ImagingExamination`, `MicrobiologicalExamination`, `SpecializedExamination`).
+* **Δομή Κλάσεων:** `Main`, `Person`, `Doctor`, `Patient`, `Appointment`, `FileManager` και η ιεραρχία εξετάσεων (`Exam`, `ImagingExamination`, `MicrobiologicalExamination`, `SpecializedExamination`).
 
 ## 🚀 Πώς να το τρέξετε
 Για να εκτελέσετε το πρόγραμμα στο τερματικό σας, χρησιμοποιήστε τις εντολές:
